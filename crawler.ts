@@ -1,6 +1,7 @@
 import puppeteer from "puppeteer";
 import {extract} from "./extractor.js";
 import {testExtract} from "./test_extract.js";
+import {Parser} from "./parser/parser.js";
 
 const USER_AGENT = `Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36`;
 
@@ -29,4 +30,7 @@ const USER_AGENT = `Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/
     //walkExtracted(extracted);
 
     await browser.close();
+    let parser = new Parser(extracted);
+    let parsed = parser.parse();
+    console.log(parsed);
 })();
