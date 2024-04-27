@@ -29,6 +29,7 @@ build/Release
 
 # Dependency directories
 node_modules
+bun.lockb
 jspm_packages
 # Optional npm cache directory
 .npm
@@ -43,3 +44,5 @@ dump.rdb
 #Hide Javascript source files
 **/*.js
 **/*.js.map
+
+!jest.config.js

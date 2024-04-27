@@ -1,21 +1,25 @@
 {
   "name": "parser",
   "version": "1.0.0",
-  "description": "",
-  "main": "crawler.js",
-  "type": "module",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "author": "",
-  "license": "ISC",
+  "main": "crawler.js",
   "dependencies": {
     "@tsconfig/recommended": "^1.0.6",
     "@types/puppeteer": "^7.0.4",
-    "jest": "^29.7.0",
     "puppeteer": "^22.7.0",
-    "ts-jest": "^29.1.2",
     "tsc": "^2.0.4",
     "typescript": "^5.4.5"
+  },
+  "description": "",
+  "license": "ISC",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "type": "module",
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
   }
 }
