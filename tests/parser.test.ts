@@ -8,7 +8,10 @@ describe("Parser", () => {
 
         //Make a simple list of articles
         const articleList = makeBlock("BODY",{}, [
-            makeBlock("ARTICLE",{},[makeText("Title")])
+            makeBlock("ARTICLE",{},[
+                makeText("Title"),
+                makeText("Subtitle")
+            ])
         ]);
 
         const parser = new Parser(articleList);
@@ -119,4 +122,6 @@ describe("Parser", () => {
         expect(output[19].title).toBe("Title");
         expect(output[19].content).toStartWith("Another sub title");
     });
+
+
 });

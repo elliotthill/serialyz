@@ -196,10 +196,12 @@ export class Parser {
             this.rollup(container, content);
 
             let thisContainer: FlatContainer = {
-                title: title.text,
-                content: content.text,
+                title: title.text.trim(),
+                content: content.text.trim(),
             }
 
+            //if its not empty
+            if (title.text.replaceAll(" ", "") !== content.text.replaceAll(" ", ""))
             this.flatContainers.push(thisContainer);
         }
     }

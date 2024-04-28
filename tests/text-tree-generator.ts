@@ -40,7 +40,7 @@ const makeFieldDataPath = (fullPath: string) => {
     makeFieldDataPath(fieldDataPath);
     await page.screenshot({path:`${fieldDataPath}/${domain}.jpg`, type:"jpeg", quality:90});
     writeFileSync(`${fieldDataPath}/${domain}.html`, html);
-    writeFileSync(`${fieldDataPath}/${domain}.txt`, JSON.stringify(extracted));
+    writeFileSync(`${fieldDataPath}/${domain}.json`, JSON.stringify(extracted));
 
     await browser.close();
 })();
