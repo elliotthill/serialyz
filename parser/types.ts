@@ -1,14 +1,16 @@
 
 export type TextTree = {
-    type: "block" | "text" | undefined;
-    tag: string | undefined;
-    text: string | undefined;
-    styles: TextTreeStyles | undefined;
-    debug: Node | undefined;
-    children: TextTree[] | undefined;
-    parent: TextTree | undefined;
-    containerized: boolean | undefined;
+    type: ElementType;
+    tag?: string | undefined;
+    text?: string | undefined;
+    styles?: TextTreeStyles | undefined;
+    debug?: Node | undefined;
+    children?: TextTree[] | undefined;
+    parent?: TextTree | undefined;
+    containerized?: boolean | undefined;
 };
+
+export type ElementType = "block" | "text";
 
 export type TextTreeStyles = {
     border: number,

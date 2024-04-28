@@ -14,6 +14,9 @@ export const extract = async () => {
         func(node, textTree);
         textTree.children = [];
 
+        if (children === undefined)
+            return;
+
         for (var i = 0; i < children.length; i++) { // Children are siblings to each other
             textTree.children[i] = {} as TextTree;
             walk(children[i], func, textTree.children[i]);
