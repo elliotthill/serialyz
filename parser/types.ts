@@ -8,6 +8,7 @@ export type TextTree = {
     children?: TextTree[] | undefined;
     parent?: TextTree | undefined;
     containerized?: boolean | undefined;
+    specialParent?: string | undefined; //Used to indicate whether this element is under a <li>
 };
 
 export type ElementType = "block" | "text";

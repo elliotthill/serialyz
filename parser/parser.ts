@@ -30,12 +30,13 @@ export class Parser {
      */
     titles(): TextTree[]{
         this.collectTitles(this.sourceTree);
+        this.titleNodes.sort(this.sortTitles);
         return this.titleNodes;
     }
 
     /**
      * Third stage of parsing. Containers are parsed and flattened into lists
-    */
+     */
     lists(): FlatContainer[] {
 
         this.containerize(this.titleNodes);
@@ -63,7 +64,7 @@ export class Parser {
 
     //The block elements 'send' down their stylings to any text elements below
     //this is so that we can access those stylings without traversal
-    private cascade(tree: TextTree, parent: TextTree | null) {
+    private cascade(tree: TextTree, blockParent: TextTree | null) {
 
         if (tree.children === undefined)
             return;
@@ -73,15 +74,30 @@ export class Parser {
             if (child === undefined)
                 continue;
 
+            /*
+             * Propogate the last block parent so that styles cascade down
+             */
             if (child.type === 'block') {
-                parent = child;
+                blockParent = child;
             } else if (child.type === 'text') {
-                if (parent) {
-                    child.styles = parent.styles;
+                if (blockParent) {
+                    child.styles = blockParent.styles;
                 }
             }
+
+            /*
+             * Propogate special tags to all children
+             */
+            if (child.parent) {
+                if (child.parent.specialParent)
+                    child.specialParent = child.parent.specialParent;
+                else if (child.parent.tag !== undefined && config.SPECIAL_PARENTS.includes(child.parent.tag))
+                    child.specialParent = child.parent.tag;
+            }
+
+            //Recurse
             if (child.children)
-                this.cascade(child, parent);
+                this.cascade(child, blockParent);
         }
     }
 
@@ -107,6 +123,18 @@ export class Parser {
         }
     }
 
+    /**
+     * Sorts our list of titles by font size descending
+     * this is so that the larger the title the higher priority it has
+     */
+    private sortTitles(a:TextTree, b:TextTree) {
+        if (a.styles === undefined || b.styles === undefined) {
+            throw Error("TextTree not cascaded in sort titles");
+        }
+        //sorts on styles.size DESC
+        return (b.styles.size > a.styles.size) ? 1 : ((a.styles.size > b.styles.size) ? -1 : 0);
+    }
+
     private containerize(titleNodes: TextTree[]) {
 
         for (const child of titleNodes) {
@@ -128,7 +156,7 @@ export class Parser {
         if (tree.tag === 'LI' || tree.tag === 'ARTICLE')
             return this.markAndReturnContainer(tree);
 
-        if (tree.parent.styles !== undefined) {
+        if (!tree.specialParent && tree.parent.styles !== undefined) {
 
             if (tree.parent.styles.border > 0) //|| tree.parent.styles.borderRadius > 0)
                 return this.markAndReturnContainer(tree.parent);
@@ -191,6 +219,14 @@ export class Parser {
 
             this.rollup(child, content);
         }
+    }
+
+
+    /*
+    * Exposure for testing purposes only
+    */
+    getContainers(): Container[] {
+        return this.containers
     }
 
 }
