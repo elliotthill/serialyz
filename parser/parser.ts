@@ -200,6 +200,9 @@ export class Parser {
                 content: content.text.trim(),
             }
 
+            if(config.IGNORE_CONTAINER_TITLES.includes(title.text.toLowerCase()))
+                continue;
+
             //if its not empty
             if (title.text.replaceAll(" ", "") !== content.text.replaceAll(" ", ""))
             this.flatContainers.push(thisContainer);
