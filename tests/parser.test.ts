@@ -123,5 +123,4 @@ describe("Parser", () => {
         expect(output[19].content).toStartWith("Another sub title");
     });
 
-
 });
