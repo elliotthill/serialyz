@@ -11,7 +11,6 @@ describe("Parser Field Test", () => {
 
         const parser = new Parser(gocoderemotecomFieldData as TextTree);
         const output = parser.parse();
-
         expect(output.length).toBe(25);
         expect(output[0].title).toBe("Software Engineer");
         expect(output[24].title).toBe("Full Stack Developer");

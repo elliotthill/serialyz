@@ -166,7 +166,7 @@ export class Parser {
                 return this.markAndReturnContainer(tree.parent);
 
             /*
-                * This approach results in tons of false matches, if changed
+            * This approach results in tons of false matches, if changed
             * to have a minimum width, i.e. min width of 300px it could
             * pickup more real list items
             *
@@ -174,6 +174,12 @@ export class Parser {
                     tree.parent.styles.width > (tree.styles.width * WIDTH_CHANGE_CONTAINER_THRESHOLD_PERCENT) {
                 return returnContainer(tree);
             }*/
+
+            if (tree.styles !== undefined &&
+                tree.styles.width > config.WIDTH_CHANGE_MIN &&
+                tree.parent.styles.width > (tree.styles.width * config.WIDTH_CHANGE_CONTAINER_THRESHOLD)) {
+                return this.markAndReturnContainer(tree);
+            }
 
         }
 
