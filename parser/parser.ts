@@ -30,6 +30,8 @@ export class Parser {
      */
     titles(): TextTree[]{
         this.collectTitles(this.sourceTree);
+        if (this.titleNodes.length === 0)
+            throw Error("No titles found");
         this.titleNodes.sort(this.sortTitles);
         return this.titleNodes;
     }
@@ -115,6 +117,8 @@ export class Parser {
                 (child.styles.size > config.TITLE_THRESHOLD_FONT_SIZE
                     || child.styles.weight > config.TITLE_THRESHOLD_FONT_WEIGHT)) {
 
+
+                if(!config.DONT_USE_AS_TITLE.includes(child.text.toLowerCase()))
                 this.titleNodes.push(child);
             }
 
@@ -153,7 +157,7 @@ export class Parser {
         if (tree.parent === undefined)
             return undefined;
 
-        if (tree.tag === 'LI' || tree.tag === 'ARTICLE')
+        if (tree.tag && config.SPECIAL_PARENTS.includes(tree.tag))
             return this.markAndReturnContainer(tree);
 
         if (!tree.specialParent && tree.parent.styles !== undefined) {
@@ -202,7 +206,6 @@ export class Parser {
 
             if(config.IGNORE_CONTAINER_TITLES.includes(title.text.toLowerCase()))
                 continue;
-
             //if its not empty
             if (title.text.replaceAll(" ", "") !== content.text.replaceAll(" ", ""))
             this.flatContainers.push(thisContainer);
