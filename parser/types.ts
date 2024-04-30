@@ -18,7 +18,10 @@ export type TextTreeStyles = {
     borderRadius: number,
     weight: number,
     size: number,
-    width: number
+    width: number,
+    titleScore: number, //Font size in px + (1px for every 100 weight over 400(set in conf))
+    top: number,
+    left: number
 }
 
 export type Container = {

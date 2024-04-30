@@ -10,6 +10,9 @@ export const extract = async () => {
         if (node.nodeType === Node.ELEMENT_NODE && tagBlacklist.includes((<HTMLElement>node).tagName))
             return;
 
+        if (node.nodeType === Node.ELEMENT_NODE && getStyle(node, 'display') === "none")
+            return;
+
         const children = node.childNodes;
         func(node, textTree);
         textTree.children = [];
@@ -49,12 +52,19 @@ export const extract = async () => {
             let combinedBorderRadius = getStylePx(node, "border-top-left-radius") +
                 getStylePx(node, "border-bottom-right-radius");
 
+            let offsets = cumulativeOffset((<HTMLElement>node));
+
+            if (offsets === undefined)
+                offsets = {top:0, left: 0}
+
             appendTo.styles = <TextTreeStyles>{
                 border: combinedBorder,
                 borderRadius: combinedBorderRadius,
                 weight: getStylePx(node, "font-weight"),
                 size: getStylePx(node, "font-size"),
                 width: getStylePx(node, "width"),
+                top: offsets.top,
+                left: offsets.left
             };
         }
 
@@ -63,6 +73,22 @@ export const extract = async () => {
             //appendTo.debug = node;
             appendTo.type = "text";
         }
+    }
+
+    const cumulativeOffset = (element: HTMLElement | null) => {
+
+        if (!element)
+            return;
+
+        let top = 0, left = 0;
+
+        do {
+            top += element.offsetTop;
+            left += element.offsetLeft;
+            element = (<HTMLElement>element.offsetParent);
+        } while (element)
+
+            return {top, left};
     }
 
     walk(document.body, nodeProc, textTree); //Prints out every node

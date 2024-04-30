@@ -19,7 +19,7 @@ export class Parser {
      * First stage of parsing. Modify the TextTree with cascaded css and parent references
      * for faster and more convenient lookups whilst parsing
      */
-    preprocess(): TextTree{
+    preprocess(): TextTree {
         this.setRefToParent(this.sourceTree);
         this.cascade(this.sourceTree, null);
         return this.sourceTree;
@@ -28,7 +28,7 @@ export class Parser {
     /**
      * Second stage of parsing. Create a list of nodes that represent content titles
      */
-    titles(): TextTree[]{
+    titles(): TextTree[] {
         this.collectTitles(this.sourceTree);
         if (this.titleNodes.length === 0)
             throw Error("No titles found");
@@ -46,7 +46,7 @@ export class Parser {
         return this.flatContainers;
     }
 
-    parse(): FlatContainer[]{
+    parse(): FlatContainer[] {
         this.preprocess();
         this.titles();
         return this.lists();
@@ -84,6 +84,14 @@ export class Parser {
             } else if (child.type === 'text') {
                 if (blockParent) {
                     child.styles = blockParent.styles;
+
+                    if (child.styles !== undefined) {
+                        child.styles.titleScore = child.styles.size +
+                        ((child.styles.weight/100) - (config.TITLE_ELIGIBILITY_SCORE_WEIGHT_CONTRIBUTION_THRESHOLD/100))
+
+                        if (child.styles.left)
+                        child.styles.titleScore += (((this.sourceTree.styles.width - child.styles.left) / this.sourceTree.styles.width) * config.TITLE_SCORE_LEFT_WEIGHT)
+                    }
                 }
             }
 
@@ -103,10 +111,15 @@ export class Parser {
         }
     }
 
+
     private collectTitles(tree: TextTree) {
 
         if (tree.children === undefined)
             return;
+
+        //Wildcard match tag name, to ignore screen reader content etc
+        if (tree.tag ) {
+        }
 
         for (const child of tree.children) {
 
@@ -119,7 +132,7 @@ export class Parser {
 
 
                 if(!config.DONT_USE_AS_TITLE.includes(child.text.toLowerCase()))
-                this.titleNodes.push(child);
+                    this.titleNodes.push(child);
             }
 
             if (child.children)
@@ -135,8 +148,9 @@ export class Parser {
         if (a.styles === undefined || b.styles === undefined) {
             throw Error("TextTree not cascaded in sort titles");
         }
+
         //sorts on styles.size DESC
-        return (b.styles.size > a.styles.size) ? 1 : ((a.styles.size > b.styles.size) ? -1 : 0);
+        return (b.styles.titleScore > a.styles.titleScore) ? 1 : ((a.styles.titleScore > b.styles.titleScore) ? -1 : 0);
     }
 
     private containerize(titleNodes: TextTree[]) {
@@ -152,23 +166,29 @@ export class Parser {
         }
     }
 
+    /*
+     * Recursively backtrack/ascend looking for the "end" of the container
+     */
     private findParentContainer(tree: TextTree): TextTree | undefined {
 
         if (tree.parent === undefined)
             return undefined;
 
+        //They made it easy on us and used <li> or some such
         if (tree.tag && config.SPECIAL_PARENTS.includes(tree.tag))
             return this.markAndReturnContainer(tree);
 
         if (!tree.specialParent && tree.parent.styles !== undefined) {
 
+            //Borders usually mean a container
             if (tree.parent.styles.border > 0) //|| tree.parent.styles.borderRadius > 0)
                 return this.markAndReturnContainer(tree.parent);
 
             /*
             * If the container is greater than CONTAINER_MIN_PX_WIDTH_CHANGE_CONTAINER
-            * then we can check if it suddenly grows WIDTH_CHANGE_CONTAINER_THRESHOLD x larger
-            * if so containerize it.
+            * then we can check if the parent grows WIDTH_CHANGE_CONTAINER_THRESHOLD x larger
+            *
+            * This helps match when there are no borders or useful tags to signify the end of a container
             */
             if (tree.styles !== undefined &&
                 tree.styles.width > config.CONTAINER_MIN_PX_WIDTH_CHANGE_CONTAINER &&

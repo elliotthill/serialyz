@@ -36,3 +36,6 @@ Name ideas:
     - serialyz.com
     - parsalyze.com
     - jsonfox.com jsonjelly.com
+    - jellyjelly.com
+    - jellibot.com
+    - jellyjson.com
