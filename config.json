@@ -8,7 +8,8 @@
     "TAG_IGNORE": ["HEADER", "BUTTON", "SCRIPT", "FORM", "INPUT", "FOOTER"],
     "SPECIAL_PARENTS": ["LI", "ARTICLE", "YTD-VIDEO-RENDERER"],
     "IGNORE_CONTAINER_TITLES": ["change country", "job post details","location"],
-    "DONT_USE_AS_TITLE": ["share"],
+    "DONT_USE_AS_TITLE": ["share", "."],
+    "DONT_USE_AS_TITLE_STARTS_WITH": ["$", "£", "€"],
     "IGNORE_TAGS_WILDCARD": ["faceplate"]
 
 }

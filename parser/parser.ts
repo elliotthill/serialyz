@@ -13,6 +13,16 @@ export class Parser {
         this.titleNodes = [];
         this.containers = [];
         this.flatContainers = [];
+        this.validate();
+    }
+
+    validate(): void {
+
+        if (typeof this.sourceTree !== 'object')
+            throw Error("No JSON Render provided to Parser");
+
+        if (this.sourceTree.styles === undefined)
+            throw Error("Malformed JSON Render provided");
     }
 
     /**
@@ -77,26 +87,31 @@ export class Parser {
                 continue;
 
             /*
-             * Propogate the last block parent so that styles cascade down
+             * Propagate the last block parent so that styles cascade down
              */
             if (child.type === 'block') {
+
                 blockParent = child;
-            } else if (child.type === 'text') {
-                if (blockParent) {
-                    child.styles = blockParent.styles;
 
-                    if (child.styles !== undefined) {
-                        child.styles.titleScore = child.styles.size +
-                        ((child.styles.weight/100) - (config.TITLE_ELIGIBILITY_SCORE_WEIGHT_CONTRIBUTION_THRESHOLD/100))
+            } else if (child.type === 'text' && blockParent && blockParent.styles) {
 
-                        if (child.styles.left)
-                        child.styles.titleScore += (((this.sourceTree.styles.width - child.styles.left) / this.sourceTree.styles.width) * config.TITLE_SCORE_LEFT_WEIGHT)
-                    }
-                }
+                child.styles = blockParent.styles;
+
+                //Bigger and Bolder text has higher score
+                child.styles.titleScore = child.styles.size +
+                    ((child.styles.weight/100) - (config.TITLE_ELIGIBILITY_SCORE_WEIGHT_CONTRIBUTION_THRESHOLD/100))
+
+                //Punish one word titles
+                if (child.text!.trim().indexOf(" ") == -1)
+                    child.styles.titleScore -= 1;
+
+                //Titles further left have higher scores
+                if (child.styles.left)
+                    child.styles.titleScore += (((this.sourceTree.styles!.width - child.styles.left) / this.sourceTree.styles!.width) * config.TITLE_SCORE_LEFT_WEIGHT)
             }
 
             /*
-             * Propogate special tags to all children
+             * Propagate special tags to all children
              */
             if (child.parent) {
                 if (child.parent.specialParent)
@@ -126,12 +141,16 @@ export class Parser {
             if (child === undefined)
                 continue;
 
-            if (child.type === 'text' && child.styles !== undefined &&
+            if (child.type === 'text' && child.text !== undefined && child.styles !== undefined &&
                 (child.styles.size > config.TITLE_THRESHOLD_FONT_SIZE
                     || child.styles.weight > config.TITLE_THRESHOLD_FONT_WEIGHT)) {
 
+                let c = config.DONT_USE_AS_TITLE_STARTS_WITH;
 
-                if(!config.DONT_USE_AS_TITLE.includes(child.text.toLowerCase()))
+                if(!config.DONT_USE_AS_TITLE.includes(child.text.toLowerCase()) &&
+                    !c.find((text:string) => {return c.includes(child.text[0])}) &&
+                    !this.isNumber(child.text)
+                  )
                     this.titleNodes.push(child);
             }
 
@@ -139,6 +158,8 @@ export class Parser {
                 this.collectTitles(child);
         }
     }
+
+    private isNumber = (value:string) => /^\d+$/.test(value);
 
     /**
      * Sorts our list of titles by font size descending

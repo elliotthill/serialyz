@@ -1,6 +1,5 @@
 import puppeteer from "puppeteer";
 import {extract} from "./extractor.js";
-import {testExtract} from "./test_extract.js";
 import {Parser} from "./parser/parser.js";
 import { TextTree } from "./parser/types.js";
 
