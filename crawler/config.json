@@ -1,0 +1,8 @@
+{
+    "USER_AGENT": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
+    "PUPPETEER_ARGS": {"args":["--window-size=1680,1080"]},
+    "PUPPETEER_VIEWPORT": {
+        "width": 1680,
+        "height": 1080
+    }
+}
