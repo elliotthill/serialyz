@@ -31,7 +31,7 @@ export type Container = {
 
 export type FlatContainer = {
     title: string;
-    content: string;
+    content: Array<string>;
 }
 
 export interface Config {

@@ -1,12 +1,12 @@
 import {type TextTree, type Config, type FlatContainer, type Container} from "./types.js";
-import config from "../config.json" assert {type:"json"};
+import config from "./config.json" assert {type:"json"};
 
 export class Parser {
 
-    private sourceTree: TextTree;
-    private titleNodes: TextTree[];
-    private containers: Container[];
-    private flatContainers: FlatContainer[];
+    private readonly sourceTree: TextTree;
+    private readonly titleNodes: TextTree[];
+    private readonly containers: Container[];
+    private readonly flatContainers: FlatContainer[];
 
     constructor(sourceTree: TextTree) {
         this.sourceTree = sourceTree;
@@ -24,7 +24,6 @@ export class Parser {
         if (this.sourceTree.styles === undefined)
             throw Error("Malformed JSON Render provided");
     }
-
     /**
      * First stage of parsing. Modify the TextTree with cascaded css and parent references
      * for faster and more convenient lookups whilst parsing
@@ -148,7 +147,7 @@ export class Parser {
                 let c = config.DONT_USE_AS_TITLE_STARTS_WITH;
 
                 if(!config.DONT_USE_AS_TITLE.includes(child.text.toLowerCase()) &&
-                    !c.find((text:string) => {return c.includes(child.text[0])}) &&
+                    !c.find((text:string) => {return c.includes(child.text![0])}) &&
                     !this.isNumber(child.text)
                   )
                     this.titleNodes.push(child);
@@ -238,12 +237,12 @@ export class Parser {
             if (!title.text)
                 continue;
 
-            let content = { text: "" }; //So we can pass by ref
+            let content = { text: "" , textArray: []}; //So we can pass by ref
             this.rollup(container, content);
 
             let thisContainer: FlatContainer = {
                 title: title.text.trim(),
-                content: content.text.trim(),
+                content: content.textArray,
             }
 
             if(config.IGNORE_CONTAINER_TITLES.includes(title.text.toLowerCase()))
@@ -254,7 +253,7 @@ export class Parser {
         }
     }
 
-    private rollup(container: TextTree, content: {text: string}) {
+    private rollup(container: TextTree, content: {text: string, textArray: Array<string>}) {
 
         if (container.children === undefined)
             return;
@@ -263,9 +262,10 @@ export class Parser {
             if (child === undefined)
                 continue;
 
-            if (child.text)
+            if (child.text) {
                 content.text += child.text + " ";
-
+                content.textArray.push(child.text.trim());
+            }
 
             this.rollup(child, content);
         }

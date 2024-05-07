@@ -13,7 +13,7 @@ describe("reddit.com field test", () => {
         expect(output[0].title).toBe("Murray's game-winner");
         expect(output[6].title).toStartWith("What's something you think is totally");
         //expect(output[34].title).toBe("Promoted");
-
+        console.log(output);
     });
 
 });
