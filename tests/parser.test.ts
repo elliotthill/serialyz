@@ -59,7 +59,7 @@ describe("Parser", () => {
 
         expect(output.length).toBe(1);
         expect(output[0].title).toBe("Title");
-        expect(output[0].content).toStartWith("This is the primary content");
+        expect(output[0].content[0]).toStartWith("This is the primary content");
     });
 
     test("Special tags propogate", () => {
@@ -98,7 +98,7 @@ describe("Parser", () => {
 
         expect(output.length).toBe(1);
         expect(output[0].title).toBe("Title");
-        expect(output[0].content).toStartWith("This is the primary content");
+        expect(output[0].content[0]).toStartWith("This is the primary content");
     });
 
     test("Match all possible containers", () => {
@@ -120,7 +120,7 @@ describe("Parser", () => {
         const output = parser.parse();
         expect(output.length).toBe(20);
         expect(output[19].title).toBe("Title");
-        expect(output[19].content).toStartWith("Another sub title");
+        expect(output[19].content[0]).toStartWith("Another sub title");
     });
 
 });
