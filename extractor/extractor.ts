@@ -1,4 +1,4 @@
-import {TextTree, Container, FlatContainer, TextTreeStyles} from "./parser/types.js";
+import {TextTree, Container, FlatContainer, TextTreeStyles} from "../parser/types.js";
 
 export const extract = async () => {
     const tagBlacklist = ["HEADER", "BUTTON", "SCRIPT", "FORM", "INPUT", "FOOTER"];
@@ -20,7 +20,7 @@ export const extract = async () => {
         if (children === undefined)
             return;
 
-        for (var i = 0; i < children.length; i++) { // Children are siblings to each other
+        for (let i = 0; i < children.length; i++) { // Children are siblings to each other
             textTree.children[i] = {} as TextTree;
             walk(children[i], func, textTree.children[i]);
         }
