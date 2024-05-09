@@ -4,6 +4,8 @@ import {Parser} from "../parser/parser.js"
 import { TextTree } from "../parser/types.js"
 import config from "./config.json" assert {type:"json"}
 
+///https://bun.sh/docs/api/spawn#inter-process-communication-ipc
+
 export class Crawler {
 
     private browser: Browser
@@ -14,7 +16,6 @@ export class Crawler {
     }
 
     static async initialize() {
-
         const browser = await puppeteer.launch(config.PUPPETEER_ARGS)
         return new Crawler(browser)
     }

@@ -3,11 +3,11 @@ import config from "./config.json" assert {type:"json"};
 import {Crawler} from "./crawler/crawler.js";
 import {Parser} from "./parser/parser.js";
 
-const crawler = await Crawler.initialize();
+let crawler = await Crawler.initialize();
 
 serve({
     port: config.SERVICE_PORT,
-    hostname: config.SERVICE_HOST,
+    //hostname: config.SERVICE_HOST,
     async fetch(req: Request) {
 
         const start = performance.now();
@@ -18,7 +18,7 @@ serve({
             console.log(json);
         } catch (e) {
            console.error("Could not find JSON");
-           return new Response('Invalid request', { status: 500 })
+           return new Response('Invalid request', {status: 500})
         }
 
         if (!json.url)

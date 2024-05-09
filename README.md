@@ -39,3 +39,11 @@ Name ideas:
     - jellyjelly.com
     - jellibot.com
     - jellyjson.com
+    - conjectr.com
+    - inferthis.com
+    - scan / android keywords
+    - jsondroid.com
+    - scanjson.com
+    - inferdroid.com
+    - inferopus.com
+    - jellyscanner.com
