@@ -48,4 +48,5 @@ dump.rdb
 !jest.config.js
 
 crawler/tmp
+.env
 
