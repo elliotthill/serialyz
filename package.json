@@ -4,6 +4,8 @@
   "author": "",
   "main": "crawler.js",
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.572.0",
+    "@aws-sdk/credential-providers": "^3.572.0",
     "@tsconfig/recommended": "^1.0.6",
     "@types/puppeteer": "^7.0.4",
     "puppeteer": "^22.7.0",

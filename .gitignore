@@ -46,3 +46,6 @@ dump.rdb
 **/*.js.map
 
 !jest.config.js
+
+crawler/tmp
+

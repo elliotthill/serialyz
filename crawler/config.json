@@ -4,5 +4,8 @@
     "PUPPETEER_VIEWPORT": {
         "width": 1680,
         "height": 1080
-    }
+    },
+    "SCREENSHOT_FOLDER": "./crawler/tmp",
+    "SCREENSHOT_BUCKET": "serialyzr",
+    "SCREENSHOT_AWS_REGION": "us-east-1"
 }
