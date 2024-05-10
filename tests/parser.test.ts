@@ -104,4 +104,24 @@ describe("Parser", () => {
         expect(output[19].title).toBe("Title")
         expect(output[19].content[0]).toStartWith("Another sub title")
     })
+
+    test("Extract link", () => {
+        const articleList = makeBlock("BODY", {}, [
+            makeBlock("DIV", {border: 1}, [
+                makeText("This is the primary content"),
+                makeBlock("DIV", {}, [
+                    makeText("Subtitle"),
+                    makeBlock("DIV", {size: 14}, [makeText("Some content")]),
+                    makeBlock("DIV", {size: 18}, [makeText("Another sub title")]),
+                    makeBlock("DIV", {size: 20}, [makeText("Title")])
+                ])
+            ])
+        ])
+
+        const parser = new Parser(articleList)
+        const output = parser.parse()
+
+        expect(output.length).toBe(1)
+        expect(output[0].link).toBe("https://reddit.com")
+    })
 })

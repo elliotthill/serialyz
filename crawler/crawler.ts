@@ -33,11 +33,7 @@ export class Crawler {
 
         //Screenshot async
         try {
-            this.screenshot(
-                page,
-                `${config.SCREENSHOT_FOLDER}/${domain}.jpg`,
-                `screenshots/${domain}.jpg`
-            )
+            this.screenshot(page, `${config.SCREENSHOT_FOLDER}/${domain}.jpg`, `screenshots/${domain}.jpg`)
         } catch (e) {
             console.error(`Screenshot produced error: ${e}`)
         }
