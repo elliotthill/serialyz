@@ -45,6 +45,7 @@ export class Parser {
      */
     lists(): FlatContainer[] {
         this.containerize(this.titleNodes)
+        this.linkerize(this.containers)
         this.flattenContainers(this.containers)
         return this.flatContainers
     }
@@ -205,6 +206,28 @@ export class Parser {
         }
 
         return this.findParentContainer(tree.parent)
+    }
+
+    private linkerize(containers: Container[]) {
+        for (const container of containers) {
+            if (container.title.link !== undefined) continue
+            let link = this.findFirstLinkChildren(container.container)
+            if (link !== undefined) {
+                container.title.link = link
+            }
+        }
+    }
+
+    private findFirstLinkChildren(tree: TextTree): string | undefined {
+        if (tree.children === undefined) return
+
+        for (const child of tree.children) {
+            if (child.link !== undefined) {
+                return child.link
+            }
+            let link = this.findFirstLinkChildren(child)
+            if (link) return link
+        }
     }
 
     private markAndReturnContainer(tree: TextTree): TextTree | undefined {

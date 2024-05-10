@@ -105,7 +105,7 @@ describe("Parser", () => {
         expect(output[19].content[0]).toStartWith("Another sub title")
     })
 
-    test("Extract link", () => {
+    test("Extract link from title (title takes priority)", () => {
         const articleList = makeBlock("BODY", {}, [
             makeBlockWithLink("DIV", {border: 1}, "https://test.com", [
                 makeText("This is the primary content"),
@@ -113,7 +113,29 @@ describe("Parser", () => {
                     makeText("Subtitle"),
                     makeBlock("DIV", {size: 14}, [makeText("Some content")]),
                     makeBlock("DIV", {size: 18}, [makeText("Another sub title")]),
-                    makeBlock("DIV", {size: 20}, [makeText("Title")])
+                    makeBlock("DIV", {size: 20}, [makeText("Title")]),
+                    makeBlockWithLink("A", {size: 12}, "https://shouldnotbethis.com", [makeText("Hey")])
+                ])
+            ])
+        ])
+
+        const parser = new Parser(articleList)
+        const output = parser.parse()
+
+        expect(output.length).toBe(1)
+        expect(output[0].link).toBe("https://test.com")
+    })
+
+    test("Extract link from within container (if no title link)", () => {
+        const articleList = makeBlock("BODY", {}, [
+            makeBlock("DIV", {border: 1}, [
+                makeText("This is the primary content"),
+                makeBlock("DIV", {}, [
+                    makeText("Subtitle"),
+                    makeBlock("DIV", {size: 14}, [makeText("Some content")]),
+                    makeBlock("DIV", {size: 18}, [makeText("Another sub title")]),
+                    makeBlock("DIV", {size: 20}, [makeText("Title")]),
+                    makeBlockWithLink("A", {size: 12}, "https://test.com", [makeText("Hey")])
                 ])
             ])
         ])
