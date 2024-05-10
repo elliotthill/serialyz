@@ -11,6 +11,8 @@ const jobURL = new URL(NODE_ENV === "development" ? config.POLLING_URL_DEV : con
 const completeURL = NODE_ENV === "development" ? config.COMPLETE_URL_DEV : config.COMPLETE_URL
 
 if (!process.env.NODE_ENV) throw Error("NODE_ENV not set")
+if (!process.env.AWS_ACCESS_KEY_ID) throw Error("AWS credentials not set")
+if (!process.env.AWS_SECRET_ACCESS_KEY) throw Error("AWS credentials not set")
 
 type Job = {
     id: number
@@ -33,13 +35,13 @@ const poll = async () => {
     }
 
     const {id, url} = json
+    const postToURL = new URL(completeURL.replace("{jobId}", id.toString()))
     console.log(`Stage 2 found ID:${id} and URL:${url}`)
 
     let extraction
     try {
         extraction = await crawler.extract(url)
     } catch (e) {
-        let postToURL = new URL(completeURL.replace("{jobId}", id.toString()))
         await postURL(postToURL, {status: "error"})
         console.error(`Error occured during crawling ${e}`)
         setTimeout(poll, config.POLLING_WORKER_POLL_MS)
@@ -52,7 +54,6 @@ const poll = async () => {
     console.log(`Stage 3 got parsed tree`)
 
     try {
-        let postToURL = new URL(completeURL.replace("{jobId}", id.toString()))
         console.log(`Posting data to ${postToURL}`)
         const response = await postURL(postToURL, parsed)
         console.log(response)
