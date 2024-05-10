@@ -1,6 +1,7 @@
 export type TextTree = {
     type: ElementType
     tag?: string | undefined
+    link?: string | undefined
     text?: string | undefined
     styles?: TextTreeStyles | undefined
     debug?: Node | undefined
@@ -31,6 +32,7 @@ export type Container = {
 export type FlatContainer = {
     title: string
     content: Array<string>
+    link?: string | undefined
 }
 
 export interface Config {

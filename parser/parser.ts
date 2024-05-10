@@ -105,6 +105,13 @@ export class Parser {
                     child.specialParent = child.parent.tag
             }
 
+            /*
+             * Propogate links to all children
+             */
+            if (child.parent && child.parent.link !== undefined) {
+                child.link = child.parent.link
+            }
+
             //Recurse
             if (child.children) this.cascade(child, blockParent)
         }
@@ -220,6 +227,7 @@ export class Parser {
                 title: title.text.trim(),
                 content: content.textArray
             }
+            if (title.link !== undefined) thisContainer.link = title.link
 
             if (config.IGNORE_CONTAINER_TITLES.includes(title.text.toLowerCase())) continue
             //if its not empty

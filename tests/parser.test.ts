@@ -1,6 +1,6 @@
 import {Parser} from "../parser/parser.js"
 import {describe, expect, test} from "bun:test"
-import {makeBlock, makeText} from "./snippets.js"
+import {makeBlock, makeBlockWithLink, makeText} from "./snippets.js"
 
 describe("Parser", () => {
     test("Article tags are parsed", () => {
@@ -107,7 +107,7 @@ describe("Parser", () => {
 
     test("Extract link", () => {
         const articleList = makeBlock("BODY", {}, [
-            makeBlock("DIV", {border: 1}, [
+            makeBlockWithLink("DIV", {border: 1}, "https://test.com", [
                 makeText("This is the primary content"),
                 makeBlock("DIV", {}, [
                     makeText("Subtitle"),
@@ -122,6 +122,6 @@ describe("Parser", () => {
         const output = parser.parse()
 
         expect(output.length).toBe(1)
-        expect(output[0].link).toBe("https://reddit.com")
+        expect(output[0].link).toBe("https://test.com")
     })
 })
