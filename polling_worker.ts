@@ -1,7 +1,7 @@
 import config from "./config.json" assert {type: "json"}
-import { Crawler } from "./crawler/crawler.js"
-import { fetchURL, postURL } from "./utils/fetch-url.js"
-import { Parser } from "./parser/parser.js"
+import {Crawler} from "./crawler/crawler.js"
+import {fetchURL, postURL} from "./utils/fetch-url.js"
+import {Parser} from "./parser/parser.js"
 
 let crawler = await Crawler.initialize()
 
@@ -32,10 +32,20 @@ const poll = async () => {
         return
     }
 
-    const { id, url } = json
+    const {id, url} = json
     console.log(`Stage 2 found ID:${id} and URL:${url}`)
 
-    const extraction = await crawler.extract(url)
+    let extraction
+    try {
+        extraction = await crawler.extract(url)
+    } catch (e) {
+        let postToURL = new URL(completeURL.replace("{jobId}", id.toString()))
+        await postURL(postToURL, {status: "error"})
+        console.error(`Error occured during crawling ${e}`)
+        setTimeout(poll, config.POLLING_WORKER_POLL_MS)
+        return
+    }
+
     const parser = new Parser(extraction)
     const parsed = parser.parse()
 
@@ -48,6 +58,8 @@ const poll = async () => {
         console.log(response)
     } catch (e) {
         console.error("Error POSTing complete data")
+        setTimeout(poll, config.POLLING_WORKER_POLL_MS)
+        return
     }
 
     setTimeout(poll, config.POLLING_WORKER_POLL_MS)
