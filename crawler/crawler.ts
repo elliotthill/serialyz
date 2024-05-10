@@ -26,7 +26,7 @@ export class Crawler {
         const page = await this.browser.newPage()
         await page.setViewport(config.PUPPETEER_VIEWPORT)
         await page.setUserAgent(config.USER_AGENT)
-        await page.goto(url, {waitUntil: "networkidle0"})
+        await page.goto(url, {waitUntil: "networkidle0", timeout: config.PUPPETEER_TIMEOUT})
 
         await page.content()
         const extracted = await page.evaluate(extract)
