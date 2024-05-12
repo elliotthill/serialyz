@@ -56,6 +56,11 @@ export class Parser {
         return this.lists()
     }
 
+    debug() {
+        this.preprocess()
+        return this.titles()
+    }
+
     private setRefToParent(tree: TextTree) {
         if (tree.children === undefined) return
 
@@ -95,6 +100,10 @@ export class Parser {
                     child.styles.titleScore +=
                         ((this.sourceTree.styles!.width - child.styles.left) / this.sourceTree.styles!.width) *
                         config.TITLE_SCORE_LEFT_WEIGHT
+
+                //Higher titles have higher scores
+                //For each 50 pixels down, we deduct one point from its score.
+                if (child.styles.top) child.styles.titleScore -= child.styles.top / 50
             }
 
             /*
@@ -252,7 +261,7 @@ export class Parser {
             }
             if (title.link !== undefined) thisContainer.link = title.link
 
-            if (config.IGNORE_CONTAINER_TITLES.includes(title.text.toLowerCase())) continue
+            if (config.IGNORE_CONTAINER_TITLES.includes(title.text.toLowerCase().trim())) continue
             //if its not empty
             if (title.text.replaceAll(" ", "") !== content.text.replaceAll(" ", ""))
                 this.flatContainers.push(thisContainer)

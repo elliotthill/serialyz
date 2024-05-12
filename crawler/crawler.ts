@@ -19,21 +19,21 @@ export class Crawler {
         return new Crawler(browser)
     }
 
-    async extract(url: string) {
+    async extract(url: string, jobId: number) {
         const urlObj = new URL(url)
         const domain = urlObj.hostname.replaceAll(".", "")
 
         const page = await this.browser.newPage()
         await page.setViewport(config.PUPPETEER_VIEWPORT)
         await page.setUserAgent(config.USER_AGENT)
-        await page.goto(url, {waitUntil: "networkidle0", timeout: config.PUPPETEER_TIMEOUT})
-
+        await page.goto(url, {waitUntil: "load", timeout: config.PUPPETEER_TIMEOUT})
         await page.content()
+        await Bun.sleep(config.PUPPETEER_PAGE_WAIT)
         const extracted = await page.evaluate(extract)
 
         //Screenshot async
         try {
-            this.screenshot(page, `${config.SCREENSHOT_FOLDER}/${domain}.jpg`, `screenshots/${domain}.jpg`)
+            this.screenshot(page, `${config.SCREENSHOT_FOLDER}/${domain}.jpg`, `screenshots/${jobId}.jpg`)
         } catch (e) {
             console.error(`Screenshot produced error: ${e}`)
         }
@@ -52,10 +52,10 @@ export class Crawler {
             .then()
             .then(() => {
                 uploadToS3(source, destination)
-                    .then((result) => {
+                    .then(result => {
                         console.log("Upload to S3 complete")
                     })
-                    .catch((e) => console.error(e))
+                    .catch(e => console.error(e))
             })
             .finally(() => {
                 page.close().then()

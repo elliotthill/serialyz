@@ -40,7 +40,7 @@ const poll = async () => {
 
     let extraction
     try {
-        extraction = await crawler.extract(url)
+        extraction = await crawler.extract(url, id)
     } catch (e) {
         await postURL(postToURL, {status: "error"})
         console.error(`Error occured during crawling ${e}`)
@@ -69,6 +69,12 @@ const poll = async () => {
 setTimeout(poll, config.POLLING_WORKER_POLL_MS)
 
 process.on("SIGINT", () => {
-    console.log("Ctrl-C was pressed")
+    console.log("Polling worker was killed")
     process.exit()
+})
+if (process.send) process.send("Hello from child as string")
+
+process.on("message", message => {
+    // print message from parent
+    console.log(`Polling worker received message: ${message}`)
 })
