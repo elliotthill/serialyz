@@ -1,5 +1,5 @@
 import puppeteer from "puppeteer"
-import {extract} from "../extractor.js"
+import {extract} from "../extractor/extractor.js"
 import {Parser} from "../parser/parser.js"
 import {TextTree} from "../parser/types.js"
 import fs, {writeFileSync} from "fs"
@@ -27,7 +27,7 @@ const makeFieldDataPath = (fullPath: string) => {
         height: 1080
     })
     page.setUserAgent(USER_AGENT)
-    page.on("console", (message) =>
+    page.on("console", message =>
         console.log(`Chrome reported: ${message.type().substr(0, 3).toUpperCase()} ${message.text()}`)
     )
 

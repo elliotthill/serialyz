@@ -9,7 +9,8 @@ describe("reddit.com field test", () => {
         const output = parser.parse()
 
         expect(output.length).toBe(35)
-        expect(output[0].title).toBe("Murray's game-winner")
-        expect(output[6].title).toStartWith("What's something you think is totally")
+        expect(output[0].title).toBe("Maya Rudolph on SNL")
+        expect(output[1].title).toStartWith("Sabrina Carpenter")
+        expect(output[7].title).toStartWith("Do ice-cream turf") //The first actual post
     })
 })
