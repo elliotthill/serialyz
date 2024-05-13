@@ -245,7 +245,19 @@ export class Parser {
             return undefined
 
         tree.containerized = true
+        this.markTreeAsContainerized(tree)
         return tree
+    }
+
+    //Mark entire tree as containerized, so no child trees
+    private markTreeAsContainerized(tree: TextTree) {
+        if (tree.children === undefined) return
+
+        for (const child of tree.children) {
+            child.containerized = true
+
+            if (child.children) this.markTreeAsContainerized(child)
+        }
     }
 
     private flattenContainers(containers: Container[]) {
