@@ -47,6 +47,7 @@ export class Parser {
         this.containerize(this.titleNodes)
         this.linkerize(this.containers)
         this.flattenContainers(this.containers)
+        this.removeFluffContainers(this.flatContainers)
         return this.flatContainers
     }
 
@@ -267,6 +268,9 @@ export class Parser {
             let content = {text: "", textArray: []} //So we can pass by ref
             this.rollup(container, content)
 
+            //Remove title from content
+            content.textArray = content.textArray.filter(c => c !== title.text.trim())
+
             let thisContainer: FlatContainer = {
                 title: title.text.trim(),
                 content: content.textArray
@@ -285,12 +289,20 @@ export class Parser {
         for (const child of container.children) {
             if (child === undefined) continue
 
-            if (child.text) {
+            if (child.text && content.textArray.indexOf(child.text.trim()) === -1) {
                 content.text += child.text + " "
                 content.textArray.push(child.text.trim())
             }
 
             this.rollup(child, content)
+        }
+    }
+
+    private removeFluffContainers(containers: FlatContainer[]) {
+        for (const [key, container] of containers.entries()) {
+            if (container.content.length <= 1) {
+                containers.splice(key, 1)
+            }
         }
     }
 

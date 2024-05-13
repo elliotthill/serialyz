@@ -5,7 +5,14 @@ import {makeBlock, makeBlockWithLink, makeText} from "./snippets.js"
 describe("Parser", () => {
     test("Article tags are parsed", () => {
         //Make a simple list of articles
-        const articleList = makeBlock("BODY", {}, [makeBlock("ARTICLE", {}, [makeText("Title"), makeText("Subtitle")])])
+        // prettier-ignore
+        const articleList = makeBlock("BODY", {}, [
+            makeBlock("ARTICLE", {}, [
+                makeText("Title"),
+                makeText("Subtitle"),
+                makeText("Description")
+            ])
+        ])
 
         const parser = new Parser(articleList)
         const output = parser.parse()
@@ -54,8 +61,18 @@ describe("Parser", () => {
 
     test("Special tags propogate", () => {
         //Make a simple list of articles
+        // prettier-ignore
         const articleList = makeBlock("BODY", {}, [
-            makeBlock("ARTICLE", {}, [makeText("Subtitle"), makeBlock("DIV", {size: 20}, [makeText("Title")])])
+            makeBlock("ARTICLE", {}, [
+                makeText("Subtitle"),
+                makeBlock("DIV", { size: 20 }, [
+                    makeText("Title")
+                ]),
+                makeBlock("DIV", {}, [
+                    makeText("Subtitle"),
+                    makeText("Main content here")
+                ])
+            ])
         ])
 
         const parser = new Parser(articleList)
@@ -90,9 +107,11 @@ describe("Parser", () => {
         const twentyArticles = []
         for (let i = 0; i < 20; i++) {
             twentyArticles.push(
-                makeBlock("DIV", {border: 1}, [
-                    makeBlock("DIV", {size: 18}, [makeText("Another sub title")]),
-                    makeBlock("DIV", {size: 20}, [makeText("Title")])
+                // prettier-ignore
+                makeBlock("DIV", { border: 1 }, [
+                    makeBlock("DIV", { size: 18 }, [makeText("Another sub title")]),
+                    makeBlock("DIV", { size: 20 }, [makeText("Title")]),
+                    makeBlock("DIV", {}, [makeText("This is the main story")])
                 ])
             )
         }
@@ -145,5 +164,38 @@ describe("Parser", () => {
 
         expect(output.length).toBe(1)
         expect(output[0].link).toBe("https://test.com")
+    })
+
+    test("Fluff does not become a container", () => {
+        const articleList = makeBlock("BODY", {}, [
+            makeBlock("ARTICLE", {border: 1}, [
+                makeBlock("DIV", {}, [makeBlock("DIV", {size: 14}, [makeText("Some fluf")])])
+            ])
+        ])
+
+        const parser = new Parser(articleList)
+        const output = parser.parse()
+
+        expect(output.length).toBe(0)
+    })
+
+    test("Title should not be added to container content", () => {
+        const articleList = makeBlock("BODY", {}, [
+            makeBlock("DIV", {border: 1}, [
+                makeText("Thing"),
+                makeBlock("DIV", {}, [
+                    makeBlock("DIV", {size: 14}, [makeText("Some content")]),
+                    makeBlock("DIV", {size: 20}, [makeText("Cowabunga")]),
+                    makeBlockWithLink("A", {size: 12}, "https://test.com", [makeText("Hey")])
+                ])
+            ])
+        ])
+
+        const parser = new Parser(articleList)
+        const output = parser.parse()
+
+        expect(output.length).toBe(1)
+        expect(output[0].title).toBe("Cowabunga")
+        expect(output[0].content).toEqual(["Thing", "Some content", "Hey"])
     })
 })

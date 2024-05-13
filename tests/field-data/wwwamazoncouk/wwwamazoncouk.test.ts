@@ -8,8 +8,8 @@ describe("amazon.co.uk field test", () => {
         const parser = new Parser(amazoncoukFieldData as TextTree)
         const output = parser.parse()
 
-        expect(output[3].title).toStartWith("COMFEE' Mini Plus Dishwasher")
-        expect(output[4].title).toStartWith("Hermitlux Table Top")
+        expect(output[2].title).toStartWith("COMFEE' Mini Plus Dishwasher")
+        expect(output[3].title).toStartWith("Hermitlux Table Top")
         expect(output.length).toBeGreaterThanOrEqual(26)
     })
 })
