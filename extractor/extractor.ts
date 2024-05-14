@@ -59,6 +59,7 @@ export const extract = async () => {
             appendTo.styles = <TextTreeStyles>{
                 border: combinedBorder,
                 borderRadius: combinedBorderRadius,
+                boxShadow: getComputedStyle(<HTMLElement>node).boxShadow !== "none" ? true : false,
                 weight: getStylePx(node, "font-weight"),
                 size: getStylePx(node, "font-size"),
                 width: getStylePx(node, "width"),

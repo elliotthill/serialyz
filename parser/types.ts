@@ -17,6 +17,7 @@ export type ElementType = "block" | "text"
 export type TextTreeStyles = {
     border: number
     borderRadius: number
+    boxShadow: boolean
     weight: number
     size: number
     width: number

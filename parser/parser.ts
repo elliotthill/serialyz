@@ -197,10 +197,13 @@ export class Parser {
 
         if (!tree.specialParent && tree.parent.styles !== undefined) {
             //Borders usually mean a container
-            if (tree.parent.styles.border > 0)
-                //|| tree.parent.styles.borderRadius > 0)
+            if (tree.parent.styles.border > 0) {
                 return this.markAndReturnContainer(tree.parent)
-
+            }
+            //Box shadow AND a border radius usually means a container
+            if (tree.parent.styles.boxShadow && tree.parent.styles.borderRadius > 0) {
+                return this.markAndReturnContainer(tree.parent)
+            }
             /*
              * If the container is greater than CONTAINER_MIN_PX_WIDTH_CHANGE_CONTAINER
              * then we can check if the parent grows WIDTH_CHANGE_CONTAINER_THRESHOLD x larger
