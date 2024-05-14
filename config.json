@@ -1,7 +1,7 @@
 {
     "SERVICE_PORT": 3000,
     "SERVICE_HOST": "127.0.0.1",
-    "POLLING_WORKER_POLL_MS": 200,
+    "POLLING_WORKER_POLL_MS": 1000,
     "POLLING_WORKER_POLL_ON_ERR_MS": 1000,
     "POLLING_URL_DEV": "http://127.0.0.1:3000/api/secret",
     "POLLING_URL": "https://serialyzr.com/api/secret",

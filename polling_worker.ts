@@ -13,6 +13,7 @@ const completeURL = NODE_ENV === "development" ? config.COMPLETE_URL_DEV : confi
 if (!process.env.NODE_ENV) throw Error("NODE_ENV not set")
 if (!process.env.AWS_ACCESS_KEY_ID) throw Error("AWS credentials not set")
 if (!process.env.AWS_SECRET_ACCESS_KEY) throw Error("AWS credentials not set")
+if (!process.env.API_POLL_KEY) throw Error("No poll key")
 
 type Job = {
     id: number
