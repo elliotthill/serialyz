@@ -41,6 +41,7 @@ export const extract = async () => {
             appendTo.type = "block"
             appendTo.tag = (<HTMLElement>node).tagName
             appendTo.link = (node as any).href
+            appendTo.src = (node as any).src
 
             let combinedBorder =
                 getStylePx(node, "border-bottom-width") +

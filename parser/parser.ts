@@ -1,4 +1,4 @@
-import {type TextTree, type Config, type FlatContainer, type Container} from "./types.js"
+import {type TextTree, type Config, type FlatContainer, type Container, type ImagesWidths} from "./types.js"
 import config from "./config.json" assert {type: "json"}
 
 export class Parser {
@@ -46,6 +46,7 @@ export class Parser {
     lists(): FlatContainer[] {
         this.containerize(this.titleNodes)
         this.linkerize(this.containers)
+        this.imageize(this.containers)
         this.flattenContainers(this.containers)
         this.removeFluffContainers(this.flatContainers)
         return this.flatContainers
@@ -218,6 +219,7 @@ export class Parser {
         return this.findParentContainer(tree.parent)
     }
 
+    //Finds the first link within each container
     private linkerize(containers: Container[]) {
         for (const container of containers) {
             if (container.title.link !== undefined) continue
@@ -237,6 +239,29 @@ export class Parser {
             }
             let link = this.findFirstLinkChildren(child)
             if (link) return link
+        }
+    }
+
+    private imageize(containers: Container[]) {
+        for (const container of containers) {
+            let imagesAndWidths: ImagesWidths[] = []
+            this.findAllImages(container.container, imagesAndWidths)
+            imagesAndWidths.sort((a, b) => {
+                return a.width >= b.width ? -1 : 1
+            })
+
+            if (imagesAndWidths.length > 0) container.title.src = imagesAndWidths[0].src
+        }
+    }
+
+    private findAllImages(tree: TextTree, imagesAndWidths: ImagesWidths[]) {
+        if (tree.children === undefined) return
+
+        for (const child of tree.children) {
+            if (child.src !== undefined) {
+                imagesAndWidths.push({src: child.src, width: child.styles!.width || 0})
+            }
+            this.findAllImages(child, imagesAndWidths)
         }
     }
 
@@ -269,13 +294,15 @@ export class Parser {
             this.rollup(container, content)
 
             //Remove title from content
-            content.textArray = content.textArray.filter(c => c !== title.text.trim())
+            content.textArray = content.textArray.filter(c => c !== title.text!.trim())
 
             let thisContainer: FlatContainer = {
                 title: title.text.trim(),
                 content: content.textArray
             }
             if (title.link !== undefined) thisContainer.link = title.link
+
+            if (title.src !== undefined) thisContainer.image = title.src
 
             if (config.IGNORE_CONTAINER_TITLES.includes(title.text.toLowerCase().trim())) continue
             //if its not empty

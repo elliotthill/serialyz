@@ -1,6 +1,6 @@
 import {Parser} from "../parser/parser.js"
 import {describe, expect, test} from "bun:test"
-import {makeBlock, makeBlockWithLink, makeText} from "./snippets.js"
+import {makeBlock, makeImage, makeLink, makeText} from "./snippets.js"
 
 describe("Parser", () => {
     test("Article tags are parsed", () => {
@@ -126,14 +126,14 @@ describe("Parser", () => {
 
     test("Extract link from title (title takes priority)", () => {
         const articleList = makeBlock("BODY", {}, [
-            makeBlockWithLink("DIV", {border: 1}, "https://test.com", [
+            makeLink("DIV", {border: 1}, "https://test.com", [
                 makeText("This is the primary content"),
                 makeBlock("DIV", {}, [
                     makeText("Subtitle"),
                     makeBlock("DIV", {size: 14}, [makeText("Some content")]),
                     makeBlock("DIV", {size: 18}, [makeText("Another sub title")]),
                     makeBlock("DIV", {size: 20}, [makeText("Title")]),
-                    makeBlockWithLink("A", {size: 12}, "https://shouldnotbethis.com", [makeText("Hey")])
+                    makeLink("A", {size: 12}, "https://shouldnotbethis.com", [makeText("Hey")])
                 ])
             ])
         ])
@@ -154,7 +154,7 @@ describe("Parser", () => {
                     makeBlock("DIV", {size: 14}, [makeText("Some content")]),
                     makeBlock("DIV", {size: 18}, [makeText("Another sub title")]),
                     makeBlock("DIV", {size: 20}, [makeText("Title")]),
-                    makeBlockWithLink("A", {size: 12}, "https://test.com", [makeText("Hey")])
+                    makeLink("A", {size: 12}, "https://test.com", [makeText("Hey")])
                 ])
             ])
         ])
@@ -186,7 +186,7 @@ describe("Parser", () => {
                 makeBlock("DIV", {}, [
                     makeBlock("DIV", {size: 14}, [makeText("Some content")]),
                     makeBlock("DIV", {size: 20}, [makeText("Cowabunga")]),
-                    makeBlockWithLink("A", {size: 12}, "https://test.com", [makeText("Hey")])
+                    makeLink("A", {size: 12}, "https://test.com", [makeText("Hey")])
                 ])
             ])
         ])
@@ -197,5 +197,43 @@ describe("Parser", () => {
         expect(output.length).toBe(1)
         expect(output[0].title).toBe("Cowabunga")
         expect(output[0].content).toEqual(["Thing", "Some content", "Hey"])
+    })
+
+    test("Image is found in container", () => {
+        //Make a simple list of articles
+        const articleList = makeBlock("BODY", {}, [
+            makeBlock("ARTICLE", {}, [
+                makeText("Subtitle"),
+                makeImage("IMG", {width: 100}, "https://image.jpg", []),
+                makeBlock("DIV", {size: 18}, [makeText("Another sub title")]),
+                makeBlock("DIV", {size: 20}, [makeText("Title")])
+            ])
+        ])
+
+        const parser = new Parser(articleList)
+        const output = parser.parse()
+
+        expect(output.length).toBe(1)
+        expect(output[0].image).toBe("https://image.jpg")
+    })
+
+    test("Largest Image is found in container", () => {
+        //Make a simple list of articles
+        const articleList = makeBlock("BODY", {}, [
+            makeBlock("ARTICLE", {}, [
+                makeText("Subtitle"),
+                makeImage("IMG", {width: 100}, "https://no.jpg", []),
+                makeImage("IMG", {width: 300}, "https://image.jpg", []),
+                makeImage("IMG", {width: 200}, "https://no.jpg", []),
+                makeBlock("DIV", {size: 18}, [makeText("Another sub title")]),
+                makeBlock("DIV", {size: 20}, [makeText("Title")])
+            ])
+        ])
+
+        const parser = new Parser(articleList)
+        const output = parser.parse()
+
+        expect(output.length).toBe(1)
+        expect(output[0].image).toBe("https://image.jpg")
     })
 })

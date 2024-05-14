@@ -2,6 +2,7 @@ export type TextTree = {
     type: ElementType
     tag?: string | undefined
     link?: string | undefined
+    src?: string | undefined
     text?: string | undefined
     styles?: TextTreeStyles | undefined
     debug?: Node | undefined
@@ -33,6 +34,7 @@ export type FlatContainer = {
     title: string
     content: Array<string>
     link?: string | undefined
+    image?: string | undefined
 }
 
 export interface Config {
@@ -40,4 +42,9 @@ export interface Config {
     TITLE_THRESHOLD_FONT_WEIGHT: number
     WIDTH_CHANGE_CONTAINER_THRESHOLD_PERCENT: number
     TAG_IGNORE: Array<string>
+}
+
+export type ImagesWidths = {
+    src: string
+    width: number
 }
