@@ -4,9 +4,9 @@
     "POLLING_WORKER_POLL_MS": 1000,
     "POLLING_WORKER_POLL_ON_ERR_MS": 1000,
     "POLLING_URL_DEV": "http://127.0.0.1:3000/api/secret",
-    "POLLING_URL": "https://serialyzr.com/api/secret",
+    "POLLING_URL": "https://serialyz.com/api/secret",
     "COMPLETE_URL_DEV": "http://127.0.0.1:3000/api/secret/{jobId}/return",
-    "COMPLETE_URL": "https://serialyzr.com/api/secret/{jobId}/return",
+    "COMPLETE_URL": "https://serialyz.com/api/secret/{jobId}/return",
     "POLLING_URL_TIMEOUT": 3000,
     "USER_AGENT": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36"
 }

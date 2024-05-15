@@ -19,8 +19,9 @@ const proc = Bun.spawn(["bun", "polling_worker.ts"], {
 setTimeout(() => {
     proc.send("Parent to child messsage")
 }, 2000)
-process.on("SIGINT", () => {
+process.on("SIGINT", async () => {
     console.log("Ctrl-C was pressed")
     proc.kill()
+    await proc.exited
     process.exit()
 })
