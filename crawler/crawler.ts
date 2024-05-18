@@ -29,6 +29,12 @@ export class Crawler {
         await page.goto(url, {waitUntil: "load", timeout: config.PUPPETEER_TIMEOUT})
         await page.content()
         await Bun.sleep(config.PUPPETEER_PAGE_WAIT)
+
+        //Bot Evasion
+        await page.evaluate("window.scrollBy(1, window.innerHeight)")
+        await page.evaluate("window.scrollTo(0,0)")
+        await page.mouse.move(100, 100)
+
         const extracted = await page.evaluate(extract)
 
         //Screenshot async
