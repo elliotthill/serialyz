@@ -5,8 +5,6 @@ import {TextTree} from "../parser/types.js"
 import config from "./config.json" assert {type: "json"}
 import {uploadToS3} from "../utils/upload_s3.js"
 
-///https://bun.sh/docs/api/spawn#inter-process-communication-ipc
-
 export class Crawler {
     private browser: Browser
 
@@ -26,9 +24,10 @@ export class Crawler {
         const page = await this.browser.newPage()
         await page.setViewport(config.PUPPETEER_VIEWPORT)
         await page.setUserAgent(config.USER_AGENT)
-        await page.goto(url, {waitUntil: "load", timeout: config.PUPPETEER_TIMEOUT})
-        await page.content()
-        await Bun.sleep(config.PUPPETEER_PAGE_WAIT)
+
+        /// Wait for networkidle or until timeout
+        const waitForNetwork = page.goto(url, {waitUntil: "networkidle0", timeout: config.PUPPETEER_TIMEOUT})
+        await Promise.race([waitForNetwork, Bun.sleep(config.PUPPETEER_PAGE_WAIT)])
 
         //Bot Evasion
         await page.evaluate("window.scrollBy(1, window.innerHeight)")

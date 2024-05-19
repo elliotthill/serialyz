@@ -6,7 +6,7 @@
         "height": 1280
     },
     "PUPPETEER_TIMEOUT": 20000,
-    "PUPPETEER_PAGE_WAIT": 1000,
+    "PUPPETEER_PAGE_WAIT": 15000,
     "SCREENSHOT_FOLDER": "./crawler/tmp",
     "SCREENSHOT_BUCKET": "serialyzr",
     "SCREENSHOT_AWS_REGION": "us-east-1"
