@@ -50,8 +50,16 @@ const poll = async () => {
         return
     }
 
-    const parser = new Parser(extraction)
-    const parsed = parser.parse()
+    let parsed
+    try {
+        const parser = new Parser(extraction)
+        parsed = parser.parse()
+    } catch (e) {
+        console.error(`ParseError ${e}`)
+        await postURL(postToURL, {status: "error"})
+        setTimeout(poll, config.POLLING_WORKER_POLL_MS)
+        return
+    }
 
     console.log(`Stage 3 got parsed tree`)
 

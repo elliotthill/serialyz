@@ -34,8 +34,11 @@ export class Crawler {
         await page.setUserAgent(config.USER_AGENT)
 
         /// Wait for networkidle or until timeout
+        console.time("wait")
         const waitForNetwork = page.goto(url, {waitUntil: "networkidle0", timeout: config.PUPPETEER_TIMEOUT})
         await Promise.race([waitForNetwork, Bun.sleep(config.PUPPETEER_PAGE_WAIT)])
+        await page.content()
+        console.timeEnd("wait")
 
         //Bot Evasion
         //await page.evaluate("window.scrollBy(1, window.innerHeight)")
