@@ -5,11 +5,11 @@ const master = async (): Promise<Subprocess[]> => {
     let procs: Subprocess[] = []
 
     const init = async () => {
-        procs.push(spawn())
-
-        await Bun.sleep(config.POLLING_URL_TIMEOUT / 2)
-
-        procs.push(spawn())
+        for (let i = 0; i < config.WORKER_COUNT; i++) {
+            procs.push(spawn())
+            await Bun.sleep(config.POLLING_WORKER_POLL_MS / config.WORKER_COUNT)
+            console.log(`Spawning worker ${i}`)
+        }
     }
 
     const spawn = (): Subprocess => {

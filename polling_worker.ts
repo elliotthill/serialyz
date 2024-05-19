@@ -6,6 +6,7 @@ import {Parser} from "./parser/parser.js"
 let crawler = await Crawler.initialize()
 
 const NODE_ENV = process.env.NODE_ENV
+console.log(`Running in ${NODE_ENV} mode`)
 
 const jobURL = new URL(NODE_ENV === "development" ? config.POLLING_URL_DEV : config.POLLING_URL)
 const completeURL = NODE_ENV === "development" ? config.COMPLETE_URL_DEV : config.COMPLETE_URL
