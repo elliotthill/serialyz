@@ -1,9 +1,17 @@
-import puppeteer, {Browser, Puppeteer} from "puppeteer"
+import puppeteerVanilla, {Browser, Puppeteer} from "puppeteer"
+import {addExtra} from "puppeteer-extra"
+import adblock from "puppeteer-extra-plugin-stealth"
+import stealth from "puppeteer-extra-plugin-stealth"
+
 import {extract} from "../extractor/extractor.js"
 import {Parser} from "../parser/parser.js"
 import {TextTree} from "../parser/types.js"
 import config from "./config.json" assert {type: "json"}
 import {uploadToS3} from "../utils/upload_s3.js"
+
+const puppeteer = addExtra(puppeteerVanilla)
+puppeteer.use(adblock())
+puppeteer.use(stealth())
 
 export class Crawler {
     private browser: Browser
@@ -30,7 +38,7 @@ export class Crawler {
         await Promise.race([waitForNetwork, Bun.sleep(config.PUPPETEER_PAGE_WAIT)])
 
         //Bot Evasion
-        await page.evaluate("window.scrollBy(1, window.innerHeight)")
+        //await page.evaluate("window.scrollBy(1, window.innerHeight)")
         await page.evaluate("window.scrollTo(0,0)")
         await page.mouse.move(100, 100)
 
