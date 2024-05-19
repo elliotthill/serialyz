@@ -166,6 +166,25 @@ describe("Parser", () => {
         expect(output[0].link).toBe("https://test.com")
     })
 
+    test("Extract link on title", () => {
+        const articleList = makeBlock("BODY", {}, [
+            makeBlock("DIV", {border: 1}, [
+                makeText("Thing"),
+                makeBlock("DIV", {}, [
+                    makeBlock("DIV", {size: 14}, [makeText("Some content")]),
+                    makeBlock("DIV", {size: 20}, [makeText("Cowabunga")]),
+                    makeLink("A", {size: 25}, "https://test.com", [makeText("Hey")])
+                ])
+            ])
+        ])
+        const parser = new Parser(articleList)
+        const output = parser.parse()
+
+        expect(output.length).toBe(1)
+        expect(output[0].title).toBe("Hey")
+        expect(output[0].link).toBe("https://test.com")
+    })
+
     test("Fluff does not become a container", () => {
         const articleList = makeBlock("BODY", {}, [
             makeBlock("ARTICLE", {border: 1}, [
