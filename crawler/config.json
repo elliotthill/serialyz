@@ -5,7 +5,7 @@
         "width": 1280,
         "height": 1280
     },
-    "PUPPETEER_TIMEOUT": 20000,
+    "PUPPETEER_TIMEOUT": 15000,
     "PUPPETEER_PAGE_WAIT": 10000,
     "SCREENSHOT_FOLDER": "./crawler/tmp",
     "SCREENSHOT_BUCKET": "serialyzr",

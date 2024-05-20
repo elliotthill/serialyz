@@ -50,9 +50,10 @@ const poll = async () => {
         return
     }
 
+    let parser
     let parsed
     try {
-        const parser = new Parser(extraction)
+        parser = new Parser(extraction)
         parsed = parser.parse()
     } catch (e) {
         console.error(`ParseError ${e}`)
@@ -65,7 +66,7 @@ const poll = async () => {
 
     try {
         console.log(`Posting data to ${postToURL}`)
-        const response = await postURL(postToURL, parsed)
+        const response = await postURL(postToURL, {structure: parsed, debug: parser.log()})
         console.log(response)
     } catch (e) {
         console.error("Error POSTing complete data")

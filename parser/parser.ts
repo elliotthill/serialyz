@@ -58,11 +58,6 @@ export class Parser {
         return this.lists()
     }
 
-    debug() {
-        this.preprocess()
-        return this.titles()
-    }
-
     private setRefToParent(tree: TextTree) {
         if (tree.children === undefined) return
 
@@ -341,5 +336,12 @@ export class Parser {
      */
     getContainers(): Container[] {
         return this.containers
+    }
+
+    log() {
+        return {
+            titles: this.titleNodes.length,
+            containers: this.flatContainers.length
+        }
     }
 }
