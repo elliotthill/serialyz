@@ -1,5 +1,5 @@
 import puppeteerVanilla, {Browser, Puppeteer} from "puppeteer"
-import {addExtra} from "puppeteer-extra"
+import {VanillaPuppeteer, addExtra} from "puppeteer-extra"
 import adblock from "puppeteer-extra-plugin-stealth"
 import stealth from "puppeteer-extra-plugin-stealth"
 
@@ -9,7 +9,7 @@ import {TextTree} from "../parser/types.js"
 import config from "./config.json" assert {type: "json"}
 import {uploadToS3} from "../utils/upload_s3.js"
 
-const puppeteer = addExtra(puppeteerVanilla)
+const puppeteer = addExtra(<any>puppeteerVanilla)
 puppeteer.use(adblock())
 puppeteer.use(stealth())
 
@@ -57,7 +57,7 @@ export class Crawler {
         return extracted
     }
 
-    screenshot(page: puppeteer.Page, source: string, destination: string) {
+    screenshot(page: puppeteerVanilla.Page, source: string, destination: string) {
         console.log(`Screenshot ${source} => S3:${destination}`)
 
         page.screenshot({
