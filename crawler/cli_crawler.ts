@@ -9,18 +9,15 @@ const USER_AGENT = config.USER_AGENT
 const url = process.argv[2]
 
 if (!url) throw Error("No URL supplied")
-
 ;(async () => {
     const browser = await puppeteer.launch({
         args: ["--window-size=1680,1080"]
     })
     const page = await browser.newPage()
-    await page.setViewport({
-        width: 1680,
-        height: 1080
-    })
+    await page.setViewport(config.PUPPETEER_VIEWPORT)
+
     await page.setUserAgent(USER_AGENT)
-    page.on("console", (message) => console.log(`${message.type().substr(0, 3).toUpperCase()} ${message.text()}`))
+    page.on("console", message => console.log(`${message.type().substr(0, 3).toUpperCase()} ${message.text()}`))
 
     await page.goto(url, {waitUntil: "networkidle0"})
     const html = await page.content()

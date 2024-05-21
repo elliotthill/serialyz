@@ -173,10 +173,21 @@ export class Parser {
     }
 
     private containerize(titleNodes: TextTree[]) {
+        //First pass
         for (const child of titleNodes) {
             if (child === undefined) continue
 
             const container = this.findParentContainer(child)
+            if (container) this.containers.push({title: child, container: container})
+        }
+
+        //If we found nothing, make a second pass with much more permissive container matching
+        if (this.containers.length > 0) return
+
+        for (const child of titleNodes) {
+            if (child === undefined) continue
+
+            const container = this.findParentContainerEager(child)
             if (container) this.containers.push({title: child, container: container})
         }
     }
@@ -215,6 +226,25 @@ export class Parser {
         }
 
         return this.findParentContainer(tree.parent)
+    }
+
+    /*
+     * Same as above, but we are more desperate to find stuff now
+     */
+    private findParentContainerEager(tree: TextTree): TextTree | undefined {
+        /*
+         * Attempt to match "full width" containers
+         */
+        if (
+            tree.styles !== undefined &&
+            this.sourceTree.styles !== undefined &&
+            this.sourceTree.styles.width > 0 &&
+            tree.styles.width / this.sourceTree.styles.width > 0.5
+        ) {
+            return this.markAndReturnContainer(tree)
+        }
+        if (tree.parent === undefined) return undefined
+        return this.findParentContainerEager(tree.parent)
     }
 
     //Finds the first link within each container
@@ -324,9 +354,13 @@ export class Parser {
     }
 
     private removeFluffContainers(containers: FlatContainer[]) {
-        for (const [key, container] of containers.entries()) {
-            if (container.content.length <= 1) {
-                containers.splice(key, 1)
+        //Loop backwards and delete to avoid items "shifting" during deletion
+        let i = containers.length
+        while (i--) {
+            let container: FlatContainer = containers[i]
+            //If it has no link and only one item of content delete it
+            if (container.link === undefined && container.content.length <= 1) {
+                containers.splice(i, 1)
             }
         }
     }

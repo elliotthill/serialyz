@@ -10,6 +10,8 @@ const url = process.argv.slice(2)[0]
 const domain = new URL(url).hostname.replaceAll(".", "")
 const fieldDataPath = path.join("tests/field-data/", domain)
 
+import config from "../crawler/config.json" assert {type: "json"}
+
 const makeFieldDataPath = (fullPath: string) => {
     if (!fs.existsSync(fullPath)) {
         console.info(`Creating directory ${fullPath}`)
