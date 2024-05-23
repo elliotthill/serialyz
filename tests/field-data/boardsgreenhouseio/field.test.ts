@@ -10,5 +10,6 @@ describe("boards.greenhouse.io field test", () => {
         expect(output.length).toBe(149)
         expect(output[0].title).toBe("Training Specialist, Safety Enforcement")
         expect(output[4].title).toBe("Growth Lead, Brazil (Contract)")
+
     })
 })

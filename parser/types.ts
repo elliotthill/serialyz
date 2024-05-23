@@ -36,6 +36,7 @@ export type FlatContainer = {
     content: Array<string>
     link?: string | undefined
     image?: string | undefined
+    location?: MatchedLocation
 }
 
 export interface Config {
@@ -48,4 +49,10 @@ export interface Config {
 export type ImagesWidths = {
     src: string
     width: number
+}
+
+export type MatchedLocation = {
+    city?: string
+    state?: string
+    country?: string
 }
