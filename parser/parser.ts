@@ -1,5 +1,6 @@
 import {type TextTree, type Config, type FlatContainer, type Container, type ImagesWidths} from "./types.js"
 import config from "./config.json" assert {type: "json"}
+import {extractLocation, parseLocation, scanTextForUSLocation} from "./location/location_matching.js"
 
 export class Parser {
     private readonly sourceTree: TextTree
@@ -328,6 +329,11 @@ export class Parser {
                 title: title.text.trim(),
                 content: content.textArray
             }
+
+            //Try to extract locations from content
+            const location = scanTextForUSLocation(content.textArray)
+            if (location) thisContainer.location = location
+
             if (title.link !== undefined) thisContainer.link = title.link
 
             if (title.src !== undefined) thisContainer.image = title.src
