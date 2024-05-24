@@ -1,4 +1,4 @@
-import {MatchedLocation} from "../types.js"
+import { MatchedLocation } from "../types.js"
 
 //These should be loaded into memory
 import countries from "./countries.json" assert {type: "json"}
@@ -30,13 +30,13 @@ export const scanTextForUSLocation = (content: string[]) => {
 
         if (!foundState) {
             //Try looking for the full state name
-            foundState = split.find(word => arrStates.includes(word))
+            foundState = arrStates.find(word => text.includes(word))
             foundFullState = true
         }
 
         if (!foundState) continue
 
-        const loc = text.indexOf(foundState)
+        const loc = text.lastIndexOf(foundState)
 
         //Gather up all text up to this loc
         let i = loc - 2
@@ -74,7 +74,7 @@ export const scanTextForCountryLocation = (content: string[]) => {
     let locationFound: MatchedLocation = {}
 
     //Convert dictionary into array
-    for (const {name, code} of countries) {
+    for (const { name, code } of countries) {
         arrCountries.push(name)
         countryCodeHash[name] = code
     }

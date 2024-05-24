@@ -1,7 +1,7 @@
-import {Parser} from "../parser/parser.js"
-import {describe, expect, test} from "bun:test"
-import {makeBlock, makeImage, makeLink, makeText} from "./snippets.js"
-import {scanTextForCountryLocation, scanTextForUSLocation} from "../parser/location/location_matching.js"
+import { Parser } from "../parser/parser.js"
+import { describe, expect, test } from "bun:test"
+import { makeBlock, makeImage, makeLink, makeText } from "./snippets.js"
+import { scanTextForCountryLocation, scanTextForUSLocation } from "../parser/location/location_matching.js"
 
 describe("Location parsing", () => {
     test("US Locations are parsed in content", () => {
@@ -9,11 +9,18 @@ describe("Location parsing", () => {
         expect(location?.city).toBe("Los Angeles")
         expect(location?.state).toBe("CA")
         expect(location?.stateFull).toBe("California")
+        expect(location?.country).toBe("United States")
 
         const locationFullState = scanTextForUSLocation(["Test. Los Angeles, California. Engineering"])
         expect(locationFullState?.city).toBe("Los Angeles")
         expect(locationFullState?.state).toBe("CA")
         expect(locationFullState?.stateFull).toBe("California")
+        expect(locationFullState?.country).toBe("United States")
+
+        const locationNewYork = scanTextForUSLocation(["New York, New York"])
+        expect(locationNewYork?.city).toBe("New York")
+        expect(locationNewYork?.state).toBe("NY")
+        expect(locationNewYork?.country).toBe("United States")
     })
     test("Locations are parsed in content", () => {
         let location = scanTextForCountryLocation(["Growth Lead, Tech. Dublin, Ireland. Engineering dept."])
@@ -35,9 +42,9 @@ describe("Location parsing", () => {
         const articleList = makeBlock("BODY", {}, [
             makeBlock("ARTICLE", {}, [
                 makeText("Subtitle"),
-                makeBlock("DIV", {size: 14}, [makeText("Some content. Dallas, TX. Some other content.")]),
-                makeBlock("DIV", {size: 18}, [makeText("Another sub title")]),
-                makeBlock("DIV", {size: 20}, [makeText("Title")])
+                makeBlock("DIV", { size: 14 }, [makeText("Some content. Dallas, TX. Some other content.")]),
+                makeBlock("DIV", { size: 18 }, [makeText("Another sub title")]),
+                makeBlock("DIV", { size: 20 }, [makeText("Title")])
             ])
         ])
 
@@ -56,9 +63,9 @@ describe("Location parsing", () => {
         const articleList = makeBlock("BODY", {}, [
             makeBlock("ARTICLE", {}, [
                 makeText("Subtitle"),
-                makeBlock("DIV", {size: 14}, [makeText("Some content. Dublin, Ireland. Some other content.")]),
-                makeBlock("DIV", {size: 18}, [makeText("Another sub title")]),
-                makeBlock("DIV", {size: 20}, [makeText("Title")])
+                makeBlock("DIV", { size: 14 }, [makeText("Some content. Dublin, Ireland. Some other content.")]),
+                makeBlock("DIV", { size: 18 }, [makeText("Another sub title")]),
+                makeBlock("DIV", { size: 20 }, [makeText("Title")])
             ])
         ])
 
@@ -77,9 +84,9 @@ describe("Location parsing", () => {
         const articleList = makeBlock("BODY", {}, [
             makeBlock("ARTICLE", {}, [
                 makeText("Subtitle"),
-                makeBlock("DIV", {size: 14}, [makeText("Some content. Testing, this. Some other content.")]),
-                makeBlock("DIV", {size: 18}, [makeText("Another sub title")]),
-                makeBlock("DIV", {size: 20}, [makeText("Title")])
+                makeBlock("DIV", { size: 14 }, [makeText("Some content. Testing, this. Some other content.")]),
+                makeBlock("DIV", { size: 18 }, [makeText("Another sub title")]),
+                makeBlock("DIV", { size: 20 }, [makeText("Title")])
             ])
         ])
 
