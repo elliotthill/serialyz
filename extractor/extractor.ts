@@ -32,7 +32,7 @@ export const extract = async () => {
     }
 
     const getStylePx = (node: Node, style: string): number => {
-        return parseInt(getStyle(node, style)) || 0
+        return parseFloat(getStyle(node, style)) || 0
     }
 
     const nodeProc = (node: Node, appendTo: TextTree) => {
