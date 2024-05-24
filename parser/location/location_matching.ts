@@ -4,19 +4,36 @@ import {MatchedLocation} from "../types.js"
 import countries from "./countries.json" assert {type: "json"}
 import states from "./states.json" assert {type: "json"}
 
+/*
+ * This needs to be cleaned up
+ */
 export const scanTextForUSLocation = (content: string[]) => {
+    const arrCodes = []
     const arrStates = []
+    let stateCodeToFullHash = {}
+    let stateFullToCodeHash = {}
     let locationFound: MatchedLocation = {}
 
     //Convert dictionary into array
     for (const [key, state] of Object.entries(states)) {
-        arrStates.push(key)
+        arrCodes.push(key)
+        arrStates.push(state)
+        stateCodeToFullHash[key] = state
+        stateFullToCodeHash[state] = key
     }
 
     for (const text of content) {
+        let foundFullState = false
         const split = text.split(/[ ,.]+/)
 
-        const foundState = split.find(word => arrStates.includes(word))
+        let foundState = split.find(word => arrCodes.includes(word))
+
+        if (!foundState) {
+            //Try looking for the full state name
+            foundState = split.find(word => arrStates.includes(word))
+            foundFullState = true
+        }
+
         if (!foundState) continue
 
         const loc = text.indexOf(foundState)
@@ -36,20 +53,30 @@ export const scanTextForUSLocation = (content: string[]) => {
             i--
         }
 
-        locationFound.state = foundState.trim()
+        if (foundFullState) {
+            locationFound.stateFull = foundState.trim()
+            locationFound.state = stateFullToCodeHash[foundState.trim()]
+        } else {
+            locationFound.state = foundState.trim()
+            locationFound.stateFull = stateCodeToFullHash[foundState.trim()]
+        }
         locationFound.city = gathered.trim()
-        locationFound.country = "US"
+        locationFound.country = "United States"
+        locationFound.countryCode = "US"
+        return locationFound
     }
-    return locationFound
+    return undefined
 }
 
 export const scanTextForCountryLocation = (content: string[]) => {
     const arrCountries = []
+    const countryCodeHash = {}
     let locationFound: MatchedLocation = {}
 
     //Convert dictionary into array
     for (const {name, code} of countries) {
         arrCountries.push(name)
+        countryCodeHash[name] = code
     }
 
     for (const text of content) {
@@ -74,8 +101,10 @@ export const scanTextForCountryLocation = (content: string[]) => {
         }
 
         locationFound.city = gathered.trim()
-        locationFound.country = foundCountry
+        locationFound.countryCode = countryCodeHash[foundCountry.trim()]
+        locationFound.country = foundCountry.trim()
+        return locationFound
     }
 
-    return locationFound
+    return undefined
 }

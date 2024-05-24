@@ -54,5 +54,7 @@ export type ImagesWidths = {
 export type MatchedLocation = {
     city?: string
     state?: string
+    stateFull?: string
     country?: string
+    countryCode: string
 }
