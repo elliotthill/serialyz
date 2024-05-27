@@ -15,7 +15,9 @@ export class Parser {
         this.flatContainers = []
         this.validate()
     }
-
+    /**
+     * Validate input sourceTree
+     */
     validate(): void {
         if (typeof this.sourceTree !== "object") throw Error("No JSON Render provided to Parser")
 
@@ -53,12 +55,16 @@ export class Parser {
         return this.flatContainers
     }
 
+    /**
+     * All parsing stages.
+     */
     parse(): FlatContainer[] {
         this.preprocess()
         this.titles()
         return this.lists()
     }
 
+    /// Give each node a reference to its parent
     private setRefToParent(tree: TextTree) {
         if (tree.children === undefined) return
 
@@ -125,6 +131,9 @@ export class Parser {
         }
     }
 
+    /**
+     * Parse titles  from the page
+     */
     private collectTitles(tree: TextTree) {
         if (tree.children === undefined) return
 
@@ -173,6 +182,9 @@ export class Parser {
         return b.styles.titleScore > a.styles.titleScore ? 1 : a.styles.titleScore > b.styles.titleScore ? -1 : 0
     }
 
+    /*
+     * Each title should be assigned a node container it is the title of
+     */
     private containerize(titleNodes: TextTree[]) {
         //First pass
         for (const child of titleNodes) {
