@@ -20,7 +20,16 @@ type Job = {
     id: number
     url: string
 }
+
+let idle: boolean = true
+let scheduledToDie = false
+
 const poll = async () => {
+    idle = false
+
+    if (scheduledToDie) {
+        process.exit(0)
+    }
     let json
     try {
         const body = await fetchURL(jobURL)
@@ -75,6 +84,7 @@ const poll = async () => {
     }
 
     setTimeout(poll, config.POLLING_WORKER_POLL_MS)
+    idle = true
 }
 
 setTimeout(poll, config.POLLING_WORKER_POLL_MS)
@@ -86,6 +96,9 @@ process.on("SIGINT", () => {
 if (process.send) process.send("Hello from child as string")
 
 process.on("message", message => {
-    // print message from parent
-    console.log(`Polling worker received message: ${message}`)
+    scheduledToDie = true
+    if (idle) process.exit()
+    else {
+        console.log(`Kill messsage received, but worker not idle`)
+    }
 })

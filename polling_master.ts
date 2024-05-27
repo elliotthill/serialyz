@@ -9,6 +9,7 @@ const master = async (): Promise<Subprocess[]> => {
             procs.push(spawn())
             await Bun.sleep(config.POLLING_WORKER_POLL_MS / config.WORKER_COUNT)
             console.log(`Spawning worker ${i}`)
+            setLifetime(procs[i], config.RESPAWN_WORKER * (i + 1))
         }
     }
 
@@ -20,7 +21,10 @@ const master = async (): Promise<Subprocess[]> => {
             onExit(proc, exitCode, signalCode, error) {
                 // exit handler
                 //
-                console.log("Process exited")
+                console.log("Subprocess exited")
+                let newProc = spawn()
+                procs.push(newProc)
+                setLifetime(newProc, config.RESPAWN_WORKER)
             },
             ipc(message) {
                 console.log(`Parent received: ${message} from child`)
@@ -33,6 +37,11 @@ const master = async (): Promise<Subprocess[]> => {
         })
     }
 
+    const setLifetime = (proc: Subprocess, lifetime: number) => {
+        setTimeout(() => {
+            proc.send("die")
+        }, lifetime)
+    }
     init()
     return procs
 }
