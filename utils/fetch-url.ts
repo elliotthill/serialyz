@@ -16,7 +16,7 @@ export const fetchURL = async (url: URL): Promise<string> => {
             signal: controller.signal, //Timeout
             headers: {
                 "User-Agent": config.USER_AGENT,
-                key: process.env.API_POLL_KEY
+                Authorization: process.env.API_POLL_KEY
             }
         }
 
@@ -61,7 +61,7 @@ export const postURL = async (url: URL, postData: any): Promise<string> => {
                 "User-Agent": config.USER_AGENT,
                 "Content-Type": "application/json",
                 "Content-Length": data.length,
-                key: process.env.API_POLL_KEY
+                Authorization: process.env.API_POLL_KEY
             }
         }
         console.log(`postURL ${url}`)
