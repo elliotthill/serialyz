@@ -37,7 +37,6 @@ export const fetchURL = async (url: URL): Promise<string> => {
                 resolve(body)
             })
         }).on("error", e => {
-            //Wait even longer as we might be banned/rate limited
             reject(e)
         })
     })
@@ -85,7 +84,6 @@ export const postURL = async (url: URL, postData: any): Promise<string> => {
         })
 
         req.on("error", e => {
-            //Wait even longer as we might be banned/rate limited
             reject(e)
         })
 
