@@ -215,6 +215,16 @@ export class Parser {
         if (tree.tag && config.SPECIAL_PARENTS.includes(tree.tag)) return this.markAndReturnContainer(tree)
 
         if (!tree.specialParent && tree.parent.styles !== undefined) {
+            //If it suddenly expands 10x taller, dont allow to expand
+            if (
+                tree.styles &&
+                tree.parent.styles.height &&
+                tree.styles.height &&
+                tree.styles.height * 10 > tree.parent.styles.height
+            ) {
+                return this.markAndReturnContainer(tree)
+            }
+
             //Borders usually mean a container
             if (tree.parent.styles.border > 0) {
                 return this.markAndReturnContainer(tree.parent)

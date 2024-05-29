@@ -63,6 +63,7 @@ export const extract = async () => {
                 weight: getStylePx(node, "font-weight"),
                 size: getStylePx(node, "font-size"),
                 width: getStylePx(node, "width"),
+                height: getStylePx(node, "height"),
                 top: offsets.top,
                 left: offsets.left
             }

@@ -25,8 +25,8 @@ const makeFieldDataPath = (fullPath: string) => {
     })
     const page = await browser.newPage()
     await page.setViewport({
-        width: 1680,
-        height: 1080
+        width: 1280,
+        height: 1280
     })
     page.setUserAgent(USER_AGENT)
     page.on("console", message =>
