@@ -1,7 +1,7 @@
 import config from "./config.json" assert {type: "json"}
-import {Crawler} from "./crawler/crawler.js"
-import {fetchURL, postURL} from "./utils/fetch-url.js"
-import {Parser} from "./parser/parser.js"
+import { Crawler } from "./crawler/crawler.js"
+import { fetchURL, postURL } from "./utils/fetch-url.js"
+import { Parser } from "./parser/parser.js"
 
 let crawler = await Crawler.initialize()
 
@@ -28,6 +28,7 @@ const poll = async () => {
     idle = false
 
     if (scheduledToDie) {
+        await crawler.close()
         process.exit(0)
     }
     let json
@@ -45,7 +46,7 @@ const poll = async () => {
         return
     }
 
-    const {id, url} = json
+    const { id, url } = json
     const postToURL = new URL(completeURL.replace("{jobId}", id.toString()))
     console.log(`Stage 2 found ID:${id} and URL:${url}`)
 
@@ -53,7 +54,7 @@ const poll = async () => {
     try {
         extraction = await crawler.extract(url, id)
     } catch (e) {
-        await postURL(postToURL, {status: "error"})
+        await postURL(postToURL, { status: "error" })
         console.error(`Error occured during crawling ${e}`)
         setTimeout(poll, config.POLLING_WORKER_POLL_MS)
         return
@@ -66,7 +67,7 @@ const poll = async () => {
         parsed = parser.parse()
     } catch (e) {
         console.error(`ParseError ${e}`)
-        await postURL(postToURL, {status: "error"})
+        await postURL(postToURL, { status: "error" })
         setTimeout(poll, config.POLLING_WORKER_POLL_MS)
         return
     }
@@ -75,7 +76,7 @@ const poll = async () => {
 
     try {
         console.log(`Posting data to ${postToURL}`)
-        const response = await postURL(postToURL, {structure: parsed, debug: parser.log()})
+        const response = await postURL(postToURL, { structure: parsed, debug: parser.log() })
         console.log(response)
     } catch (e) {
         console.error("Error POSTing complete data")
@@ -89,16 +90,15 @@ const poll = async () => {
 
 setTimeout(poll, config.POLLING_WORKER_POLL_MS)
 
-process.on("SIGINT", () => {
-    console.log("Polling worker was killed")
-    process.exit()
-})
 if (process.send) process.send("Hello from child as string")
 
 process.on("message", message => {
     scheduledToDie = true
-    if (idle) process.exit()
-    else {
+    if (idle) {
+        crawler.close().then(() => {
+            process.exit()
+        })
+    } else {
         console.log(`Kill messsage received, but worker not idle`)
     }
 })
