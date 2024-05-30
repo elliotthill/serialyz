@@ -1,4 +1,4 @@
-import {Subprocess, shrink} from "bun"
+import { Subprocess, shrink } from "bun"
 import config from "./config.json" assert {type: "json"}
 
 let shutdown = false
@@ -8,8 +8,9 @@ const master = async (): Promise<Subprocess[]> => {
 
     const init = async () => {
         for (let i = 0; i < config.WORKER_COUNT; i++) {
-            procs.push(spawn())
             await Bun.sleep(config.POLLING_WORKER_POLL_MS / config.WORKER_COUNT)
+            procs.push(spawn())
+
             console.log(`Spawning worker ${i}`)
             setLifetime(procs[i], config.RESPAWN_WORKER * (i + 1))
         }
@@ -19,7 +20,7 @@ const master = async (): Promise<Subprocess[]> => {
         console.info(`Spawning polling_worker`)
         return Bun.spawn(["bun", "polling_worker.ts"], {
             cwd: "./", // specify a working directory
-            env: {...process.env, FOO: "bar"}, // specify environment variables
+            env: { ...process.env, FOO: "bar" }, // specify environment variables
             onExit(proc, exitCode, signalCode, error) {
                 // exit handler
                 //

@@ -53,7 +53,8 @@ export class Crawler {
 
         //Screenshot async
         try {
-            this.screenshot(page, `${config.SCREENSHOT_FOLDER}/${domain}.jpg`, `screenshots/${jobId}.jpg`)
+            let envExtra = process.env.NODE_ENV === "production" ? "" : "dev"
+            this.screenshot(page, `${config.SCREENSHOT_FOLDER}/${domain}.jpg`, `screenshots/${envExtra}${jobId}.jpg`)
         } catch (e) {
             console.error(`Screenshot produced error: ${e}`)
         }
