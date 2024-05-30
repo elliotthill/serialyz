@@ -1,5 +1,7 @@
-import {Subprocess} from "bun"
+import {Subprocess, shrink} from "bun"
 import config from "./config.json" assert {type: "json"}
+
+let shutdown = false
 
 const master = async (): Promise<Subprocess[]> => {
     let procs: Subprocess[] = []
@@ -22,6 +24,7 @@ const master = async (): Promise<Subprocess[]> => {
                 // exit handler
                 //
                 console.log("Subprocess exited")
+                if (shutdown) return
                 let newProc = spawn()
                 procs.push(newProc)
                 setLifetime(newProc, config.RESPAWN_WORKER)
@@ -55,10 +58,12 @@ setTimeout(() => {
 */
 process.on("SIGINT", async () => {
     console.log("Ctrl-C was pressed")
+    shutdown = true
 
     let killPromises = []
     for (const proc of procs) {
         killPromises.push(proc.exited)
+        proc.send("die")
         proc.kill()
     }
 
