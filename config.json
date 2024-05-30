@@ -9,5 +9,6 @@
     "COMPLETE_URL": "https://serialyz.com/api/secret/{jobId}/return",
     "POLLING_URL_TIMEOUT": 3000,
     "USER_AGENT": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
-    "WORKER_COUNT": 4
+    "WORKER_COUNT": 2,
+    "RESPAWN_WORKER": 12000
 }

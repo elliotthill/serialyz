@@ -1,13 +1,13 @@
-import puppeteerVanilla, {Browser, Puppeteer} from "puppeteer"
-import {VanillaPuppeteer, addExtra} from "puppeteer-extra"
+import puppeteerVanilla, { Browser, Puppeteer } from "puppeteer"
+import { VanillaPuppeteer, addExtra } from "puppeteer-extra"
 import adblock from "puppeteer-extra-plugin-stealth"
 import stealth from "puppeteer-extra-plugin-stealth"
 
-import {extract} from "../extractor/extractor.js"
-import {Parser} from "../parser/parser.js"
-import {TextTree} from "../parser/types.js"
+import { extract } from "../extractor/extractor.js"
+import { Parser } from "../parser/parser.js"
+import { TextTree } from "../parser/types.js"
 import config from "./config.json" assert {type: "json"}
-import {uploadToS3} from "../utils/upload_s3.js"
+import { uploadToS3 } from "../utils/upload_s3.js"
 
 const puppeteer = addExtra(<any>puppeteerVanilla)
 puppeteer.use(adblock())
@@ -25,6 +25,10 @@ export class Crawler {
         return new Crawler(browser)
     }
 
+    async close() {
+        return this.browser.close
+    }
+
     async extract(url: string, jobId: number) {
         const urlObj = new URL(url)
         const domain = urlObj.hostname.replaceAll(".", "")
@@ -35,7 +39,7 @@ export class Crawler {
 
         /// Wait for networkidle or until timeout
         console.time("wait")
-        const waitForNetwork = page.goto(url, {waitUntil: "networkidle0", timeout: config.PUPPETEER_TIMEOUT})
+        const waitForNetwork = page.goto(url, { waitUntil: "networkidle0", timeout: config.PUPPETEER_TIMEOUT })
         await Promise.race([waitForNetwork, Bun.sleep(config.PUPPETEER_PAGE_WAIT)])
         await page.content()
         console.timeEnd("wait")
