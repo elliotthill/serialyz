@@ -1,6 +1,6 @@
-import {type TextTree, type Config, type FlatContainer, type Container, type ImagesWidths} from "./types.js"
+import { type TextTree, type Config, type FlatContainer, type Container, type ImagesWidths } from "./types.js"
 import config from "./config.json" assert {type: "json"}
-import {scanTextForCountryLocation, scanTextForUSLocation} from "./location/location_matching.js"
+import { scanTextForCountryLocation, scanTextForUSLocation } from "./location/location_matching.js"
 
 export class Parser {
     private readonly sourceTree: TextTree
@@ -191,7 +191,7 @@ export class Parser {
             if (child === undefined) continue
 
             const container = this.findParentContainer(child)
-            if (container) this.containers.push({title: child, container: container})
+            if (container) this.containers.push({ title: child, container: container })
         }
 
         //If we found nothing, make a second pass with much more permissive container matching
@@ -201,7 +201,7 @@ export class Parser {
             if (child === undefined) continue
 
             const container = this.findParentContainerEager(child)
-            if (container) this.containers.push({title: child, container: container})
+            if (container) this.containers.push({ title: child, container: container })
         }
     }
 
@@ -220,7 +220,7 @@ export class Parser {
                 tree.styles &&
                 tree.parent.styles.height &&
                 tree.styles.height &&
-                tree.styles.height * 10 > tree.parent.styles.height
+                tree.styles.height * 100 < tree.parent.styles.height
             ) {
                 return this.markAndReturnContainer(tree)
             }
@@ -310,7 +310,7 @@ export class Parser {
 
         for (const child of tree.children) {
             if (child.src !== undefined) {
-                imagesAndWidths.push({src: child.src, width: child.styles!.width || 0})
+                imagesAndWidths.push({ src: child.src, width: child.styles!.width || 0 })
             }
             this.findAllImages(child, imagesAndWidths)
         }
@@ -338,10 +338,10 @@ export class Parser {
     }
 
     private flattenContainers(containers: Container[]) {
-        for (const {title, container} of containers) {
+        for (const { title, container } of containers) {
             if (!title.text) continue
 
-            let content = {text: "", textArray: []} //So we can pass by ref
+            let content = { text: "", textArray: [] } //So we can pass by ref
             this.rollup(container, content)
 
             //Remove title from content
@@ -369,7 +369,7 @@ export class Parser {
         }
     }
 
-    private rollup(container: TextTree, content: {text: string; textArray: Array<string>}) {
+    private rollup(container: TextTree, content: { text: string; textArray: Array<string> }) {
         if (container.children === undefined) return
         for (const child of container.children) {
             if (child === undefined) continue

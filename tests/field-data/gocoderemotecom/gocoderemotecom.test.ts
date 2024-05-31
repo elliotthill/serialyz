@@ -1,6 +1,6 @@
-import {Parser} from "../../../parser/parser.js"
-import {describe, expect, test} from "bun:test"
-import {TextTree} from "../../../parser/types.js"
+import { Parser } from "../../../parser/parser.js"
+import { describe, expect, test } from "bun:test"
+import { TextTree } from "../../../parser/types.js"
 import gocoderemotecomFieldData from "./gocoderemotecom.json" assert {type: "json"}
 
 describe("gocoderemote.com field test", () => {
